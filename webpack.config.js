@@ -1,5 +1,10 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 
+const htmlWebpackPlugin = new HtmlWebPackPlugin({
+  template: "./src/index.html",
+  filename: "./index.html"
+});
+
 module.exports = {
   module: {
     rules: [
@@ -11,6 +16,10 @@ module.exports = {
         }
       },
       {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"]
+      },
+      {
         test: /\.html$/,
         use: [
           {
@@ -20,10 +29,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
-    })
-  ]
+  plugins: [htmlWebpackPlugin]
 };

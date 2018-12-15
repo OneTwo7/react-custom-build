@@ -3,45 +3,20 @@ import Row from './Row';
 import { ThemeContext, LocaleContext } from './context';
 
 export default function App () {
-    const [name, setName] = useState('Mary');
-    const [surname, setSurname] = useState('Poppins');
+    const name = useFormInput('Mary');
+    const surname = useFormInput('Poppins');
     const theme = useContext(ThemeContext);
     const locale = useContext(LocaleContext);
-
-    useEffect(() => {
-        document.title = name + ' ' + surname;
-    });
-
-    const [width, setWidth] = useState(window.innerWidth);
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth);
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    });
-
-    function handleNameChange (e) {
-        setName(e.target.value);
-    }
-
-    function handleSurnameChange (e) {
-        setSurname(e.target.value);
-    }
+    const width = useWindowWidth();
+    useDocumentTitle(name.value + ' ' + surname.value);
 
     return (
         <section className={theme}>
             <Row label="Name">
-                <input
-                    value={name}
-                    onChange={handleNameChange}
-                />
+                <input {...name} />
             </Row>
             <Row label="Surname">
-                <input
-                    value={surname}
-                    onChange={handleSurnameChange}
-                />
+                <input {...surname} />
             </Row>
             <Row label="Language">
                 {locale}
@@ -52,3 +27,34 @@ export default function App () {
         </section>
     );
 };
+
+function useFormInput (initialValue) {
+    const [value, setValue] = useState(initialValue);
+
+    function handleChange (e) {
+        setValue(e.target.value);
+    };
+
+    return {
+        value,
+        onChange: handleChange
+    };
+}
+
+function useDocumentTitle (title) {
+    useEffect(() => {
+        document.title = title;
+    });
+}
+
+function useWindowWidth () {
+    const [width, setWidth] = useState(window.innerWidth);
+    useEffect(() => {
+        const handleResize = () => setWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    });
+    return width;
+}
